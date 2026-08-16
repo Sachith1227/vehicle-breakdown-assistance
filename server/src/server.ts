@@ -1,6 +1,9 @@
 import express from "express";
 import authRoutes from "./routes/authRoutes";
 import testRoutes from "./routes/testRoutes";
+import vehicleRoutes from "./routes/vehicleRoutes";
+import mechanicRoutes from "./routes/mechanicRoutes";
+import breakdownRequestRoutes from "./routes/breakdownRequestRoutes";
 
 const app = express();
 
@@ -11,6 +14,9 @@ app.use(express.json());
 // Authentication routes
 app.use("/api/auth", authRoutes);
 app.use("/api/test", testRoutes);
+app.use("/api/vehicles", vehicleRoutes);
+app.use("/api/mechanics", mechanicRoutes);
+app.use("/api/requests", breakdownRequestRoutes);
 
 app.get("/", (_req, res) => {
   res.json({
