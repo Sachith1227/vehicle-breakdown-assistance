@@ -158,6 +158,82 @@ export const getPendingRequests = async (
   }
 };
 
+export const getMyAssignedRequests = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
+    // Find the mechanic profile of the logged-in service provider
+    const mechanic = await prisma.mechanic.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+    if (!mechanic) {
+      return res.status(404).json({
+        message: "Mechanic profile not found",
+      });
+    }
+
+    // Get requests assigned to this mechanic
+    const requests =
+      await prisma.breakdownRequest.findMany({
+        where: {
+          mechanicId: mechanic.id,
+
+          // Active requests only
+          status: {
+            in: [
+              "ACCEPTED",
+              "ON_THE_WAY",
+              "ARRIVED",
+              "IN_PROGRESS",
+            ],
+          },
+        },
+
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+
+          vehicle: true,
+          mechanic: true,
+        },
+
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+    return res.status(200).json({
+      requests,
+    });
+  } catch (error) {
+    console.error(
+      "Get assigned requests error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
 export const acceptBreakdownRequest = async (
   req: AuthRequest,
   res: Response

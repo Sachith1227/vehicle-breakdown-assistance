@@ -3,6 +3,7 @@ import {
   createBreakdownRequest,
   getMyBreakdownRequests,
   getPendingRequests,
+  getMyAssignedRequests,
   acceptBreakdownRequest,
   updateRequestStatus,
   getBreakdownRequestById,
@@ -20,6 +21,13 @@ router.get(
   authorize("SERVICE_PROVIDER"),
   getPendingRequests
 );
+router.get(
+  "/my-assigned",
+  authenticate,
+  authorize("SERVICE_PROVIDER"),
+  getMyAssignedRequests
+);
+
 router.patch(
   "/:id/accept",
   authenticate,

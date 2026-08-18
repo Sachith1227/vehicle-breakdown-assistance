@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import authRoutes from "./routes/authRoutes";
 import testRoutes from "./routes/testRoutes";
 import vehicleRoutes from "./routes/vehicleRoutes";
@@ -8,8 +9,13 @@ import breakdownRequestRoutes from "./routes/breakdownRequestRoutes";
 const app = express();
 
 const PORT = 5000;
-
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 app.use(express.json());
+
 
 // Authentication routes
 app.use("/api/auth", authRoutes);

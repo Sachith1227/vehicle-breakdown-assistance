@@ -5,150 +5,370 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../config/prisma";
 
 
-export const register = async (req: Request, res: Response) => {
-  try {
-    const { name, email, password } = req.body;
+// =====================================================
+// REGISTER
+// =====================================================
 
-    // 1. Check required fields
+export const register = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      role,
+      phone,
+      businessName,
+      address,
+    } = req.body;
+
+
+    // =================================================
+    // 1. CHECK REQUIRED BASIC FIELDS
+    // =================================================
+
     if (!name || !email || !password) {
       return res.status(400).json({
-        message: "Name, email and password are required",
+        message:
+          "Name, email and password are required",
       });
     }
 
-    // 2. Check if email already exists
-    const existingUser = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+
+    // =================================================
+    // 2. VALIDATE ROLE
+    // =================================================
+
+    // Only these two roles can register publicly.
+    // ADMIN should never be selectable from the
+    // registration page.
+
+    const userRole =
+      role === "SERVICE_PROVIDER"
+        ? "SERVICE_PROVIDER"
+        : "DRIVER";
+
+
+    // =================================================
+    // 3. SERVICE PROVIDER VALIDATION
+    // =================================================
+
+    if (userRole === "SERVICE_PROVIDER") {
+
+      if (
+        !phone ||
+        !businessName ||
+        !address
+      ) {
+        return res.status(400).json({
+          message:
+            "Phone, business name and address are required for service providers",
+        });
+      }
+    }
+
+
+    // =================================================
+    // 4. CHECK IF EMAIL ALREADY EXISTS
+    // =================================================
+
+    const existingUser =
+      await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+
 
     if (existingUser) {
       return res.status(409).json({
-        message: "Email already registered",
+        message:
+          "Email already registered",
       });
     }
 
-    // 3. Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 4. Create user
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-      },
-    });
+    // =================================================
+    // 5. HASH PASSWORD
+    // =================================================
 
-    // 5. Return response
+    const hashedPassword =
+      await bcrypt.hash(password, 10);
+
+
+    // =================================================
+    // 6. CREATE USER
+    // =================================================
+
+    const user =
+      await prisma.user.create({
+        data: {
+          name,
+          email,
+          password: hashedPassword,
+          role: userRole,
+        },
+      });
+
+
+    // =================================================
+    // 7. CREATE MECHANIC PROFILE
+    // =================================================
+
+    if (
+      userRole === "SERVICE_PROVIDER"
+    ) {
+
+      await prisma.mechanic.create({
+        data: {
+          userId: user.id,
+
+          businessName,
+          phone,
+
+          /*
+           * Temporary coordinates.
+           *
+           * Later we can replace these with the
+           * service provider's real GPS location.
+           */
+
+          latitude: 0,
+          longitude: 0,
+
+          isAvailable: true,
+          rating: 0,
+        },
+      });
+    }
+
+
+    // =================================================
+    // 8. RETURN SUCCESS RESPONSE
+    // =================================================
+
     return res.status(201).json({
-      message: "User registered successfully",
+
+      message:
+        userRole === "SERVICE_PROVIDER"
+          ? "Service provider account created successfully"
+          : "Driver account created successfully",
+
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
       },
+
     });
+
   } catch (error) {
-    console.error("Registration error:", error);
+
+    console.error(
+      "Registration error:",
+      error
+    );
 
     return res.status(500).json({
-      message: "Internal server error",
+      message:
+        "Internal server error",
     });
   }
 };
-export const login = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
 
-    // 1. Check required fields
+
+
+// =====================================================
+// LOGIN
+// =====================================================
+
+export const login = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const {
+      email,
+      password,
+    } = req.body;
+
+
+    // =================================================
+    // 1. CHECK REQUIRED FIELDS
+    // =================================================
+
     if (!email || !password) {
+
       return res.status(400).json({
-        message: "Email and password are required",
+        message:
+          "Email and password are required",
       });
+
     }
 
-    // 2. Find user
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+
+    // =================================================
+    // 2. FIND USER
+    // =================================================
+
+    const user =
+      await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+
 
     if (!user) {
+
       return res.status(401).json({
-        message: "Invalid email or password",
+        message:
+          "Invalid email or password",
       });
+
     }
 
-    // 3. Compare password
-    const passwordMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
+
+    // =================================================
+    // 3. COMPARE PASSWORD
+    // =================================================
+
+    const passwordMatch =
+      await bcrypt.compare(
+        password,
+        user.password
+      );
+
 
     if (!passwordMatch) {
+
       return res.status(401).json({
-        message: "Invalid email or password",
+        message:
+          "Invalid email or password",
       });
+
     }
 
-    // 4. Create JWT
-    const token = jwt.sign(
-      {
-        userId: user.id,
-        role: user.role,
-      },
-      process.env.JWT_SECRET!,
-      {
-        expiresIn: "1h",
-      }
-    );
 
-    // 5. Return token
+    // =================================================
+    // 4. CREATE JWT
+    // =================================================
+
+    const token =
+      jwt.sign(
+
+        {
+          userId: user.id,
+          role: user.role,
+        },
+
+        process.env.JWT_SECRET!,
+
+        {
+          expiresIn: "1h",
+        }
+
+      );
+
+
+    // =================================================
+    // 5. RETURN LOGIN RESPONSE
+    // =================================================
+
     return res.status(200).json({
-      message: "Login successful",
+
+      message:
+        "Login successful",
+
       token,
+
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
       },
+
     });
+
   } catch (error) {
-    console.error("Login error:", error);
+
+    console.error(
+      "Login error:",
+      error
+    );
 
     return res.status(500).json({
-      message: "Internal server error",
+      message:
+        "Internal server error",
     });
   }
 };
-export const getMe = async (req: AuthRequest, res: Response) => {
+
+
+
+// =====================================================
+// GET CURRENT USER
+// =====================================================
+
+export const getMe = async (
+  req: AuthRequest,
+  res: Response
+) => {
+
   try {
-    const userId = req.user?.userId;
+
+    const userId =
+      req.user?.userId;
+
+
+    // =================================================
+    // 1. CHECK AUTHENTICATION
+    // =================================================
 
     if (!userId) {
+
       return res.status(401).json({
-        message: "Unauthorized",
+        message:
+          "Unauthorized",
       });
+
     }
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
+
+    // =================================================
+    // 2. FIND USER
+    // =================================================
+
+    const user =
+      await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+
 
     if (!user) {
+
       return res.status(404).json({
-        message: "User not found",
+        message:
+          "User not found",
       });
+
     }
 
+
+    // =================================================
+    // 3. RETURN USER
+    // =================================================
+
     return res.status(200).json({
+
       user: {
         id: user.id,
         name: user.name,
@@ -156,12 +376,19 @@ export const getMe = async (req: AuthRequest, res: Response) => {
         role: user.role,
         createdAt: user.createdAt,
       },
+
     });
+
   } catch (error) {
-    console.error("Get user error:", error);
+
+    console.error(
+      "Get user error:",
+      error
+    );
 
     return res.status(500).json({
-      message: "Internal server error",
+      message:
+        "Internal server error",
     });
   }
 };
