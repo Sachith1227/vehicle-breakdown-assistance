@@ -35,3 +35,17 @@ export const cancelRequest = async (id: number) => {
 
   return response.data;
 };
+
+export const updateRequestStatus = async (
+  id: number,
+  status: string
+) => {
+  const response = await api.patch(
+    `/requests/${id}/status`,
+    {
+      status,
+    }
+  );
+
+  return response.data;
+};

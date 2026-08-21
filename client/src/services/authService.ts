@@ -12,6 +12,9 @@ interface RegisterData {
   phone?: string;
   businessName?: string;
   address?: string;
+
+  latitude?: number;
+  longitude?: number;
 }
 
 export const loginUser = async (data: {

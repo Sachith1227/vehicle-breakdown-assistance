@@ -14,6 +14,7 @@ export const register = async (
   res: Response
 ) => {
   try {
+
     const {
       name,
       email,
@@ -22,14 +23,20 @@ export const register = async (
       phone,
       businessName,
       address,
+      latitude,
+      longitude,
     } = req.body;
 
 
     // =================================================
-    // 1. CHECK REQUIRED BASIC FIELDS
+    // 1. BASIC VALIDATION
     // =================================================
 
-    if (!name || !email || !password) {
+    if (
+      !name ||
+      !email ||
+      !password
+    ) {
       return res.status(400).json({
         message:
           "Name, email and password are required",
@@ -41,37 +48,98 @@ export const register = async (
     // 2. VALIDATE ROLE
     // =================================================
 
-    // Only these two roles can register publicly.
-    // ADMIN should never be selectable from the
-    // registration page.
+    let userRole:
+      | "DRIVER"
+      | "SERVICE_PROVIDER";
 
-    const userRole =
-      role === "SERVICE_PROVIDER"
-        ? "SERVICE_PROVIDER"
-        : "DRIVER";
+
+    if (role === "SERVICE_PROVIDER") {
+
+      userRole =
+        "SERVICE_PROVIDER";
+
+    } else {
+
+      userRole =
+        "DRIVER";
+
+    }
 
 
     // =================================================
     // 3. SERVICE PROVIDER VALIDATION
     // =================================================
 
-    if (userRole === "SERVICE_PROVIDER") {
+    if (
+      userRole ===
+      "SERVICE_PROVIDER"
+    ) {
 
       if (
         !phone ||
         !businessName ||
-        !address
+        !address ||
+        latitude === undefined ||
+        longitude === undefined
       ) {
+
         return res.status(400).json({
           message:
-            "Phone, business name and address are required for service providers",
+            "Phone, business name, address and location are required for service providers",
         });
+
       }
+
+
+      // Check that coordinates are valid numbers
+
+      if (
+        typeof latitude !== "number" ||
+        typeof longitude !== "number"
+      ) {
+
+        return res.status(400).json({
+          message:
+            "Invalid service provider location",
+        });
+
+      }
+
+
+      // Check latitude range
+
+      if (
+        latitude < -90 ||
+        latitude > 90
+      ) {
+
+        return res.status(400).json({
+          message:
+            "Invalid latitude",
+        });
+
+      }
+
+
+      // Check longitude range
+
+      if (
+        longitude < -180 ||
+        longitude > 180
+      ) {
+
+        return res.status(400).json({
+          message:
+            "Invalid longitude",
+        });
+
+      }
+
     }
 
 
     // =================================================
-    // 4. CHECK IF EMAIL ALREADY EXISTS
+    // 4. CHECK EXISTING EMAIL
     // =================================================
 
     const existingUser =
@@ -83,10 +151,12 @@ export const register = async (
 
 
     if (existingUser) {
+
       return res.status(409).json({
         message:
           "Email already registered",
       });
+
     }
 
 
@@ -95,7 +165,10 @@ export const register = async (
     // =================================================
 
     const hashedPassword =
-      await bcrypt.hash(password, 10);
+      await bcrypt.hash(
+        password,
+        10
+      );
 
 
     // =================================================
@@ -118,49 +191,55 @@ export const register = async (
     // =================================================
 
     if (
-      userRole === "SERVICE_PROVIDER"
+      userRole ===
+      "SERVICE_PROVIDER"
     ) {
 
       await prisma.mechanic.create({
         data: {
+
           userId: user.id,
 
           businessName,
+
           phone,
 
-          /*
-           * Temporary coordinates.
-           *
-           * Later we can replace these with the
-           * service provider's real GPS location.
-           */
+          latitude,
 
-          latitude: 0,
-          longitude: 0,
+          longitude,
 
           isAvailable: true,
+
           rating: 0,
+
         },
       });
+
     }
 
 
     // =================================================
-    // 8. RETURN SUCCESS RESPONSE
+    // 8. RESPONSE
     // =================================================
 
     return res.status(201).json({
 
       message:
-        userRole === "SERVICE_PROVIDER"
+        userRole ===
+        "SERVICE_PROVIDER"
           ? "Service provider account created successfully"
           : "Driver account created successfully",
 
       user: {
+
         id: user.id,
+
         name: user.name,
+
         email: user.email,
+
         role: user.role,
+
       },
 
     });
@@ -176,6 +255,7 @@ export const register = async (
       message:
         "Internal server error",
     });
+
   }
 };
 
@@ -199,10 +279,13 @@ export const login = async (
 
 
     // =================================================
-    // 1. CHECK REQUIRED FIELDS
+    // 1. REQUIRED FIELDS
     // =================================================
 
-    if (!email || !password) {
+    if (
+      !email ||
+      !password
+    ) {
 
       return res.status(400).json({
         message:
@@ -235,7 +318,7 @@ export const login = async (
 
 
     // =================================================
-    // 3. COMPARE PASSWORD
+    // 3. CHECK PASSWORD
     // =================================================
 
     const passwordMatch =
@@ -277,7 +360,7 @@ export const login = async (
 
 
     // =================================================
-    // 5. RETURN LOGIN RESPONSE
+    // 5. RETURN RESPONSE
     // =================================================
 
     return res.status(200).json({
@@ -288,10 +371,15 @@ export const login = async (
       token,
 
       user: {
+
         id: user.id,
+
         name: user.name,
+
         email: user.email,
+
         role: user.role,
+
       },
 
     });
@@ -307,6 +395,7 @@ export const login = async (
       message:
         "Internal server error",
     });
+
   }
 };
 
@@ -328,7 +417,7 @@ export const getMe = async (
 
 
     // =================================================
-    // 1. CHECK AUTHENTICATION
+    // 1. AUTH CHECK
     // =================================================
 
     if (!userId) {
@@ -370,11 +459,18 @@ export const getMe = async (
     return res.status(200).json({
 
       user: {
+
         id: user.id,
+
         name: user.name,
+
         email: user.email,
+
         role: user.role,
-        createdAt: user.createdAt,
+
+        createdAt:
+          user.createdAt,
+
       },
 
     });
@@ -390,5 +486,6 @@ export const getMe = async (
       message:
         "Internal server error",
     });
+
   }
 };
