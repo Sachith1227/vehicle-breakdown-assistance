@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import BackButton from "../components/BackButton";
 
 import {
   MapContainer,
@@ -474,12 +475,29 @@ function NewRequestPage() {
 
         <div className="mx-auto max-w-4xl px-6 py-5">
 
-          <Link
-            to="/dashboard"
-            className="text-sm font-semibold text-blue-600 hover:text-blue-700"
-          >
-            ← Back to Dashboard
+          <Link to="/dashboard" className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white">
+              <img
+                src="/roadrescue-logo.png"
+                alt="RoadRescue Logo"
+                className="h-full w-full object-contain"
+              />
+            </div>
+
+            <div>
+              <h2 className="text-sm font-bold text-slate-900">
+                RoadRescue
+              </h2>
+
+              <p className="text-xs text-slate-500">
+                Vehicle Breakdown Assistance
+              </p>
+            </div>
           </Link>
+
+          <BackButton
+            to="/dashboard"
+          />
 
 
           <div className="mt-5">

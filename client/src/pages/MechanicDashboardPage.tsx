@@ -386,9 +386,13 @@ function MechanicDashboardPage() {
             className="flex items-center gap-3"
           >
 
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-xl text-white shadow-sm">
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white">
 
-              🔧
+              <img
+                src="/roadrescue-logo.png"
+                alt="RoadRescue Logo"
+                className="h-full w-full object-contain"
+              />
 
             </div>
 
@@ -400,7 +404,7 @@ function MechanicDashboardPage() {
               </h1>
 
               <p className="text-xs text-slate-500">
-                Service Provider Portal
+                Vehicle Breakdown Assistance. Your Ride, Our Rescue.
               </p>
 
             </div>

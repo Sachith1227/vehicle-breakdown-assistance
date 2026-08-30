@@ -16,8 +16,14 @@ function WelcomePage() {
             className="flex items-center gap-3"
           >
 
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-xl text-white shadow-sm">
-              🔧
+            <div className="flex h-20 w-20
+             items-center justify-center overflow-hidden rounded-xl bg-white">
+              <img
+                src="/roadrescue-logo.png"
+                alt="RoadRescue Logo"
+                className="h-full w-full object-contain"
+              />
+            
             </div>
 
             <div>
@@ -26,7 +32,7 @@ function WelcomePage() {
               </h1>
 
               <p className="text-xs text-slate-500">
-                Vehicle Breakdown Assistance
+                Vehicle Breakdown Assistance. Your Ride,Our Rescue.
               </p>
             </div>
 
@@ -129,7 +135,7 @@ function WelcomePage() {
 
             <div className="relative">
 
-              <div className="rounded-3xl bg-slate-900 p-6 shadow-2xl">
+              <div className="rounded-3xl bg-slate-900 p-3 shadow-2xl">
 
                 {/* Fake request card */}
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import BackButton from "../components/BackButton";
 
 import {
   MapContainer,
@@ -749,26 +750,33 @@ function RequestDetailsPage() {
 
         <div className="mx-auto max-w-4xl px-6 py-5">
 
-          <Link
+          <Link to={user?.role === "SERVICE_PROVIDER" ? "/mechanic" : "/dashboard"} className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white">
+              <img
+                src="/roadrescue-logo.png"
+                alt="RoadRescue Logo"
+                className="h-full w-full object-contain"
+              />
+            </div>
+
+            <div>
+              <h2 className="text-sm font-bold text-slate-900">
+                RoadRescue
+              </h2>
+
+              <p className="text-xs text-slate-500">
+                Vehicle Breakdown Assistance
+              </p>
+            </div>
+          </Link>
+
+          <BackButton
             to={
-              user?.role ===
-              "SERVICE_PROVIDER"
+              user?.role === "SERVICE_PROVIDER"
                 ? "/mechanic"
                 : "/requests"
             }
-            className="text-sm font-semibold text-blue-600 hover:text-blue-700"
-          >
-
-            ←{" "}
-
-            {user?.role ===
-            "SERVICE_PROVIDER"
-
-              ? "Mechanic Dashboard"
-
-              : "My Requests"}
-
-          </Link>
+          />
 
 
           <div className="mt-5">

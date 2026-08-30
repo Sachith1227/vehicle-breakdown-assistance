@@ -3,6 +3,7 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom";
+import BackButton from "../components/BackButton";
 
 import { registerUser } from "../services/authService";
 
@@ -446,21 +447,15 @@ function RegisterPage() {
             BACK
         ============================================= */}
 
-        <Link
+        <BackButton
           to="/"
-          className="mb-6 inline-flex text-sm font-semibold text-slate-600 transition hover:text-blue-600"
-        >
-
-          ← Back to Home
-
-        </Link>
-
+        />
 
         {/* =============================================
             MAIN CARD
         ============================================= */}
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xl mt-6">
 
 
           {/* ===========================================
@@ -469,9 +464,13 @@ function RegisterPage() {
 
           <div className="flex items-center gap-3">
 
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 text-2xl text-white">
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white">
 
-              🔧
+              <img
+                src="/roadrescue-logo.png"
+                alt="RoadRescue Logo"
+                className="h-full w-full object-contain"
+              />
 
             </div>
 

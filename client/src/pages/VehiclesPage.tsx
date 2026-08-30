@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import BackButton from "../components/BackButton";
 import {
   createVehicle,
   deleteVehicle,
@@ -149,9 +151,33 @@ function VehiclesPage() {
 
       {/* Header */}
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+        <div className="mx-auto max-w-7xl px-6 py-5">
 
-          <div>
+          <Link to="/dashboard" className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white">
+              <img
+                src="/roadrescue-logo.png"
+                alt="RoadRescue Logo"
+                className="h-full w-full object-contain"
+              />
+            </div>
+
+            <div>
+              <h2 className="text-sm font-bold text-slate-900">
+                RoadRescue
+              </h2>
+
+              <p className="text-xs text-slate-500">
+                Vehicle Breakdown Assistance
+              </p>
+            </div>
+          </Link>
+
+          <BackButton
+            to="/dashboard"
+          />
+
+          <div className="mt-5">
             <p className="text-sm font-medium text-blue-600">
               VEHICLE MANAGEMENT
             </p>
@@ -164,7 +190,13 @@ function VehiclesPage() {
               Manage the vehicles you use for roadside assistance.
             </p>
           </div>
+        </div>
+      </header>
 
+      {/* Toolbar */}
+      <div className="border-b border-slate-200 bg-slate-50">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <div />
           <button
             onClick={() => {
               setEditingVehicle(null);
@@ -178,9 +210,8 @@ function VehiclesPage() {
           >
             + Add Vehicle
           </button>
-
         </div>
-      </header>
+      </div>
 
 
       <main className="mx-auto max-w-7xl px-6 py-8">

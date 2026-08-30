@@ -5,15 +5,25 @@ function DashboardPage() {
   const { user, logout } = useAuth();
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div
+      className="min-h-screen bg-cover bg-center bg-fixed"
+      style={{
+        backgroundImage: "url('/roadrescue-bg1.png')",
+      }}
+    >
+      
 
       {/* Navbar */}
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
           <Link to="/dashboard" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-xl text-white shadow-sm">
-              🚗
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white">
+              <img
+                src="/roadrescue-logo.png"
+                alt="RoadRescue Logo"
+                className="h-full w-full object-contain"
+              />
             </div>
 
             <div>
@@ -22,7 +32,7 @@ function DashboardPage() {
               </h1>
 
               <p className="text-xs text-slate-500">
-                Vehicle Breakdown Assistance
+                Vehicle Breakdown Assistance. Your Ride, Our Rescue.
               </p>
             </div>
           </Link>

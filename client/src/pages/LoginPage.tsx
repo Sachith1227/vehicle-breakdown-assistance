@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import BackButton from "../components/BackButton";
 import { loginUser } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 
@@ -47,21 +48,21 @@ function LoginPage() {
       <div className="w-full max-w-md">
 
         {/* Back to Home */}
-        <Link
+        <BackButton
           to="/"
-          className="mb-6 inline-flex items-center text-sm font-semibold text-slate-600 transition hover:text-blue-600"
-        >
-          ← Back to Home
-        </Link>
+        />
 
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xl mt-6">
 
           {/* Logo */}
           <div className="flex items-center gap-3">
 
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 text-2xl text-white shadow-sm">
-              🔧
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm">
+              <img
+                src="/roadrescue-logo.png"
+                alt="RoadRescue Logo"
+                className="h-full w-full object-contain"
+              />
             </div>
 
             <div>
