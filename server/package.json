@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "prisma generate && tsc",
     "migrate:deploy": "prisma migrate deploy",
-    "vercel-build": "prisma generate && prisma migrate deploy",
+    "vercel-build": "prisma generate && prisma migrate deploy && mkdir -p public",
     "start": "node dist/server.js"
   },
   "keywords": [],
