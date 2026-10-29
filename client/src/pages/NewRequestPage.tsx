@@ -8,9 +8,11 @@ import {
   Marker,
   Popup,
   useMap,
+  useMapEvents,
 } from "react-leaflet";
 
 import MapLayers from "../components/MapLayers";
+import PlaceSearch from "../components/PlaceSearch";
 import { getBestPosition } from "../utils/geolocation";
 
 import "leaflet/dist/leaflet.css";
@@ -106,14 +108,33 @@ function MapCenter({
   const map = useMap();
 
   useEffect(() => {
+    // Keep the user's zoom level when the pin moves
     map.setView(
       [latitude, longitude],
-      16,
+      map.getZoom(),
       {
         animate: true,
       }
     );
   }, [latitude, longitude, map]);
+
+  return null;
+}
+
+
+// =====================================================
+// MOVE PIN ON MAP CLICK
+// =====================================================
+
+function MapClickToMove({
+  onMove,
+}: {
+  onMove: (latitude: number, longitude: number) => void;
+}) {
+  useMapEvents({
+    click: (event) =>
+      onMove(event.latlng.lat, event.latlng.lng),
+  });
 
   return null;
 }
@@ -797,6 +818,22 @@ function NewRequestPage() {
               </button>
 
 
+              {/* Manual choice: IP-based location can be far off */}
+
+              <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                Or find your location manually
+              </p>
+
+              <PlaceSearch
+                onSelect={(lat, lng) => {
+                  setLatitude(lat);
+                  setLongitude(lng);
+                  setAccuracy(null);
+                  setError("");
+                }}
+              />
+
+
               {/* =================================================
                   MAP
               ================================================= */}
@@ -912,6 +949,15 @@ function NewRequestPage() {
                         }
                       />
 
+
+                      <MapClickToMove
+                        onMove={(lat, lng) => {
+                          setLatitude(lat);
+                          setLongitude(lng);
+                          setAccuracy(null);
+                        }}
+                      />
+
                     </MapContainer>
 
 
@@ -968,13 +1014,13 @@ function NewRequestPage() {
                           </p>
                           <p className="mt-1">
                             Your device has no GPS, so this is a rough
-                            estimate. Drag the pin to your exact spot,
-                            or use your phone for a precise location.
+                            estimate. Search your town above, or click
+                            or drag the pin to your exact spot.
                           </p>
                         </div>
                       ) : (
                         <p className="mt-2 text-xs text-green-700">
-                          Not quite right? Drag the pin to your exact spot.
+                          Not quite right? Click the map or drag the pin to your exact spot.
                         </p>
                       )}
 
@@ -1001,7 +1047,7 @@ function NewRequestPage() {
                     </p>
 
                     <p className="mt-1 text-xs text-slate-500">
-                      Click "Use My Current Location" to continue.
+                      Use your current location or search for a place above.
                     </p>
 
                   </div>
