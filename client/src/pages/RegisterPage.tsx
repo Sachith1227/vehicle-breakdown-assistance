@@ -6,6 +6,7 @@ import {
 import BackButton from "../components/BackButton";
 
 import { registerUser } from "../services/authService";
+import { getBestPosition } from "../utils/geolocation";
 
 
 // =====================================================
@@ -125,7 +126,7 @@ function RegisterPage() {
     );
 
 
-    navigator.geolocation.getCurrentPosition(
+    getBestPosition(
 
       // ===============================================
       // SUCCESS
@@ -208,17 +209,6 @@ function RegisterPage() {
 
         }
 
-      },
-
-
-      // ===============================================
-      // OPTIONS
-      // ===============================================
-
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0,
       }
 
     );

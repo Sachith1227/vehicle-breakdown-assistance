@@ -4,10 +4,14 @@ import BackButton from "../components/BackButton";
 
 import {
   MapContainer,
-  TileLayer,
   Marker,
   Popup,
 } from "react-leaflet";
+
+import MapLayers from "../components/MapLayers";
+import RouteLine from "../components/RouteLine";
+import type { RouteSummary } from "../components/RouteLine";
+import { getBestPosition } from "../utils/geolocation";
 
 import "leaflet/dist/leaflet.css";
 
@@ -99,6 +103,18 @@ function RequestDetailsPage() {
 
 
   // ===================================================
+  // ROUTE
+  // ===================================================
+
+  const [routeSummary, setRouteSummary] =
+    useState<RouteSummary | null>(null);
+
+  // Live location of the service provider viewing the page
+  const [providerPosition, setProviderPosition] =
+    useState<[number, number] | null>(null);
+
+
+  // ===================================================
   // LOAD REQUEST
   // ===================================================
 
@@ -172,6 +188,35 @@ function RequestDetailsPage() {
     loadRequest(true);
 
   }, [id]);
+
+
+  // ===================================================
+  // SERVICE PROVIDER LIVE LOCATION
+  // ===================================================
+
+  useEffect(() => {
+
+    if (
+      user?.role !== "SERVICE_PROVIDER" ||
+      !navigator.geolocation
+    ) {
+
+      return;
+
+    }
+
+
+    // Falls back to the saved garage location on error
+    getBestPosition(
+      (position) =>
+        setProviderPosition([
+          position.coords.latitude,
+          position.coords.longitude,
+        ]),
+      () => {}
+    );
+
+  }, [user?.role]);
 
 
   // ===================================================
@@ -719,6 +764,30 @@ function RequestDetailsPage() {
     Number.isFinite(
       longitude
     );
+
+
+  // ===================================================
+  // ROUTE ORIGIN (provider's live location, else garage)
+  // ===================================================
+
+  const mechanicLatitude =
+    Number(request.mechanic?.latitude);
+
+  const mechanicLongitude =
+    Number(request.mechanic?.longitude);
+
+  const routeOrigin: [number, number] | null =
+    providerPosition ??
+    (request.mechanic &&
+    Number.isFinite(mechanicLatitude) &&
+    Number.isFinite(mechanicLongitude)
+      ? [mechanicLatitude, mechanicLongitude]
+      : null);
+
+  const routeActive =
+    validLocation &&
+    routeOrigin !== null &&
+    !["COMPLETED", "CANCELLED"].includes(request.status);
 
 
   // ===================================================
@@ -1353,6 +1422,41 @@ function RequestDetailsPage() {
 
 
             {/* =================================================
+                ROUTE SUMMARY
+            ================================================= */}
+
+            {routeActive && routeSummary && (
+
+              <div className="mx-5 mb-5 grid grid-cols-2 gap-3 sm:mx-6">
+
+                <div className="rounded-xl bg-slate-900 p-4 text-white">
+                  <p className="text-xs uppercase tracking-wide text-slate-400">
+                    Road distance
+                  </p>
+                  <p className="mt-1 text-2xl font-bold">
+                    {routeSummary.distanceKm < 1
+                      ? `${Math.round(routeSummary.distanceKm * 1000)} m`
+                      : `${routeSummary.distanceKm.toFixed(1)} km`}
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-blue-600 p-4 text-white">
+                  <p className="text-xs uppercase tracking-wide text-blue-100">
+                    Est. travel time
+                  </p>
+                  <p className="mt-1 text-2xl font-bold">
+                    {routeSummary.durationMin < 60
+                      ? `${Math.max(1, Math.round(routeSummary.durationMin))} min`
+                      : `${Math.floor(routeSummary.durationMin / 60)} h ${Math.round(routeSummary.durationMin % 60)} min`}
+                  </p>
+                </div>
+
+              </div>
+
+            )}
+
+
+            {/* =================================================
                 LEAFLET MAP
             ================================================= */}
 
@@ -1368,10 +1472,28 @@ function RequestDetailsPage() {
                 className="h-full w-full"
               >
 
-                <TileLayer
-                  attribution='&copy; OpenStreetMap contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
+                <MapLayers />
+
+
+                {routeActive && routeOrigin && (
+                  <>
+                    <Marker position={routeOrigin}>
+                      <Popup>
+                        <p className="font-bold">
+                          {providerPosition
+                            ? "🔧 You are here"
+                            : "🔧 Service Provider"}
+                        </p>
+                      </Popup>
+                    </Marker>
+
+                    <RouteLine
+                      from={routeOrigin}
+                      to={[latitude, longitude]}
+                      onRoute={setRouteSummary}
+                    />
+                  </>
+                )}
 
 
                 <Marker

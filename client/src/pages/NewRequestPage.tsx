@@ -3,12 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import BackButton from "../components/BackButton";
 
 import {
+  Circle,
   MapContainer,
   Marker,
   Popup,
-  TileLayer,
   useMap,
 } from "react-leaflet";
+
+import MapLayers from "../components/MapLayers";
+import { getBestPosition } from "../utils/geolocation";
 
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -156,6 +159,10 @@ function NewRequestPage() {
   const [longitude, setLongitude] =
     useState<number | null>(null);
 
+  // GPS accuracy radius in meters (null once the pin is moved by hand)
+  const [accuracy, setAccuracy] =
+    useState<number | null>(null);
+
   const [locationLoading, setLocationLoading] =
     useState(false);
 
@@ -245,9 +252,13 @@ function NewRequestPage() {
     setError("");
 
 
-    navigator.geolocation.getCurrentPosition(
+    getBestPosition(
 
       (position) => {
+
+        setAccuracy(
+          position.coords.accuracy
+        );
 
         const newLatitude =
           position.coords.latitude;
@@ -315,12 +326,6 @@ function NewRequestPage() {
 
         }
 
-      },
-
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0,
       }
 
     );
@@ -837,11 +842,26 @@ function NewRequestPage() {
                       className="h-[320px] w-full"
                     >
 
-                      <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      />
+                      <MapLayers />
 
+
+                      {accuracy !== null && (
+                        <Circle
+                          center={[
+                            latitude,
+                            longitude,
+                          ]}
+                          radius={accuracy}
+                          pathOptions={{
+                            color: "#2563eb",
+                            fillOpacity: 0.1,
+                            weight: 1,
+                          }}
+                        />
+                      )}
+
+
+                      {/* Draggable so the driver can fix an inaccurate fix */}
 
                       <Marker
                         position={[
@@ -849,6 +869,17 @@ function NewRequestPage() {
                           longitude,
                         ]}
                         icon={markerIcon}
+                        draggable={true}
+                        eventHandlers={{
+                          dragend: (event) => {
+                            const { lat, lng } =
+                              event.target.getLatLng();
+
+                            setLatitude(lat);
+                            setLongitude(lng);
+                            setAccuracy(null);
+                          },
+                        }}
                       >
 
                         <Popup>
@@ -896,6 +927,8 @@ function NewRequestPage() {
 
                         <p className="text-sm font-semibold text-green-800">
                           Location captured successfully
+                          {accuracy !== null &&
+                            ` (±${Math.round(accuracy)} m)`}
                         </p>
 
                       </div>
