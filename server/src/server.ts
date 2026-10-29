@@ -11,7 +11,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    // CLIENT_URL may hold several comma-separated origins
+    origin: (process.env.CLIENT_URL || "http://localhost:5173")
+      .split(",")
+      .map((url) => url.trim().replace(/\/+$/, "")),
   })
 );
 app.use(express.json());
