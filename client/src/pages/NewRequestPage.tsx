@@ -845,7 +845,7 @@ function NewRequestPage() {
                       <MapLayers />
 
 
-                      {accuracy !== null && (
+                      {accuracy !== null && accuracy <= 1000 && (
                         <Circle
                           center={[
                             latitude,
@@ -928,6 +928,7 @@ function NewRequestPage() {
                         <p className="text-sm font-semibold text-green-800">
                           Location captured successfully
                           {accuracy !== null &&
+                            accuracy <= 1000 &&
                             ` (±${Math.round(accuracy)} m)`}
                         </p>
 
@@ -955,6 +956,27 @@ function NewRequestPage() {
                         </p>
 
                       </div>
+
+
+                      {/* Laptops without GPS get a rough, network-based fix */}
+
+                      {accuracy !== null && accuracy > 1000 ? (
+                        <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+                          <p className="font-bold">
+                            ⚠️ Your location is approximate
+                            (about {Math.round(accuracy / 1000)} km off)
+                          </p>
+                          <p className="mt-1">
+                            Your device has no GPS, so this is a rough
+                            estimate. Drag the pin to your exact spot,
+                            or use your phone for a precise location.
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="mt-2 text-xs text-green-700">
+                          Not quite right? Drag the pin to your exact spot.
+                        </p>
+                      )}
 
                     </div>
 
