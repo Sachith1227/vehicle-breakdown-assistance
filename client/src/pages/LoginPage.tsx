@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BackButton from "../components/BackButton";
+import FormAlert from "../components/FormAlert";
+import PasswordInput from "../components/PasswordInput";
+import GoogleSignInButton from "../components/GoogleSignInButton";
 import { loginUser } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
+import { getErrorMessage, isValidEmail } from "../utils/apiError";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -12,13 +16,39 @@ function LoginPage() {
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setError("");
+
+    // Validate before calling the server
+    const errors: typeof fieldErrors = {};
+
+    if (!email.trim()) {
+      errors.email = "Please enter your email address.";
+    } else if (!isValidEmail(email)) {
+      errors.email = "That doesn't look like a valid email address.";
+    }
+
+    if (!password) {
+      errors.password = "Please enter your password.";
+    }
+
+    setFieldErrors(errors);
+
+    if (Object.keys(errors).length > 0) return;
+
     try {
-      setError("");
+      setLoading(true);
 
       const data = await loginUser({
-        email,
+        email: email.trim(),
         password,
       });
 
@@ -35,9 +65,12 @@ function LoginPage() {
       console.error("Login error:", error);
 
       setError(
-        error.response?.data?.message ||
-          "Login failed. Please check your email and password."
+        error.response?.status === 401
+          ? "Incorrect email or password. Please check and try again."
+          : getErrorMessage(error, "Login failed. Please try again.")
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,19 +127,15 @@ function LoginPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="mt-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
-
-              <span className="text-lg">
-                ⚠️
-              </span>
-
-              <p className="text-sm font-medium text-red-700">
-                {error}
-              </p>
-
-            </div>
+            <FormAlert
+              type="error"
+              message={error}
+              onClose={() => setError("")}
+            />
           )}
 
+
+          <form onSubmit={handleLogin} noValidate>
 
           {/* Email */}
           <div className="mt-6">
@@ -123,11 +152,24 @@ function LoginPage() {
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+              autoComplete="email"
+              aria-invalid={!!fieldErrors.email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setFieldErrors({ ...fieldErrors, email: undefined });
+              }}
+              className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:ring-4 ${
+                fieldErrors.email
+                  ? "border-red-400 focus:border-red-500 focus:ring-red-50"
+                  : "border-slate-200 focus:border-blue-500 focus:ring-blue-50"
+              }`}
             />
+
+            {fieldErrors.email && (
+              <p className="mt-1.5 text-xs font-medium text-red-600">
+                {fieldErrors.email}
+              </p>
+            )}
 
           </div>
 
@@ -142,15 +184,16 @@ function LoginPage() {
               Password
             </label>
 
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               placeholder="Enter your password"
               value={password}
-              onChange={(e) =>
-                setPassword(e.target.value)
-              }
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+              autoComplete="current-password"
+              error={fieldErrors.password}
+              onChange={(value) => {
+                setPassword(value);
+                setFieldErrors({ ...fieldErrors, password: undefined });
+              }}
             />
 
           </div>
@@ -158,11 +201,21 @@ function LoginPage() {
 
           {/* Login Button */}
           <button
-            onClick={handleLogin}
-            className="mt-7 w-full rounded-xl bg-blue-600 px-4 py-3.5 font-bold text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700 active:scale-[0.99]"
+            type="submit"
+            disabled={loading}
+            className="mt-7 w-full rounded-xl bg-blue-600 px-4 py-3.5 font-bold text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
+
+          </form>
+
+
+          {/* Google */}
+          <GoogleSignInButton
+            text="signin_with"
+            onError={setError}
+          />
 
 
           {/* Register */}

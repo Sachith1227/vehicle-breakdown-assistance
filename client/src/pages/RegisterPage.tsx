@@ -5,8 +5,23 @@ import {
 } from "react-router-dom";
 import BackButton from "../components/BackButton";
 
+import FormAlert from "../components/FormAlert";
+import PasswordInput from "../components/PasswordInput";
+import GoogleSignInButton from "../components/GoogleSignInButton";
 import { registerUser } from "../services/authService";
 import { getBestPosition } from "../utils/geolocation";
+import { getErrorMessage, isValidEmail } from "../utils/apiError";
+
+
+type FieldName =
+  | "name"
+  | "email"
+  | "phone"
+  | "businessName"
+  | "address"
+  | "location"
+  | "password"
+  | "confirmPassword";
 
 
 // =====================================================
@@ -99,6 +114,34 @@ function RegisterPage() {
 
   const [loading, setLoading] =
     useState(false);
+
+  const [fieldErrors, setFieldErrors] =
+    useState<Partial<Record<FieldName, string>>>({});
+
+
+  // ===================================================
+  // FIELD ERROR HELPERS
+  // ===================================================
+
+  const clearFieldError = (field: FieldName) =>
+    setFieldErrors((current) => ({
+      ...current,
+      [field]: undefined,
+    }));
+
+  const inputClass = (field: FieldName) =>
+    `w-full rounded-xl border bg-white px-4 py-3 outline-none transition placeholder:text-slate-400 focus:ring-4 ${
+      fieldErrors[field]
+        ? "border-red-400 focus:border-red-500 focus:ring-red-50"
+        : "border-slate-200 focus:border-blue-500 focus:ring-blue-50"
+    }`;
+
+  const renderFieldError = (field: FieldName) =>
+    fieldErrors[field] && (
+      <p className="mt-1.5 text-xs font-medium text-red-600">
+        {fieldErrors[field]}
+      </p>
+    );
 
 
   // ===================================================
@@ -231,92 +274,64 @@ function RegisterPage() {
 
 
         // =============================================
-        // BASIC VALIDATION
+        // VALIDATION (shown under each field)
         // =============================================
 
-        if (
-          !name ||
-          !email ||
-          !password ||
-          !confirmPassword
-        ) {
+        const errors: Partial<Record<FieldName, string>> = {};
 
-          setError(
-            "Please fill in all required fields."
-          );
-
-          return;
+        if (!name.trim()) {
+          errors.name = "Please enter your full name.";
         }
 
-
-        // =============================================
-        // PASSWORD MATCH
-        // =============================================
-
-        if (
-          password !==
-          confirmPassword
-        ) {
-
-          setError(
-            "Passwords do not match."
-          );
-
-          return;
+        if (!email.trim()) {
+          errors.email = "Please enter your email address.";
+        } else if (!isValidEmail(email)) {
+          errors.email = "That doesn't look like a valid email address.";
         }
 
-
-        // =============================================
-        // PASSWORD LENGTH
-        // =============================================
-
-        if (
-          password.length < 6
-        ) {
-
-          setError(
-            "Password must be at least 6 characters."
-          );
-
-          return;
+        if (!password) {
+          errors.password = "Please create a password.";
+        } else if (password.length < 6) {
+          errors.password = "Password must be at least 6 characters.";
         }
 
+        if (!confirmPassword) {
+          errors.confirmPassword = "Please confirm your password.";
+        } else if (password !== confirmPassword) {
+          errors.confirmPassword = "Passwords do not match.";
+        }
 
-        // =============================================
-        // SERVICE PROVIDER VALIDATION
-        // =============================================
+        if (role === "SERVICE_PROVIDER") {
 
-        if (
-          role ===
-          "SERVICE_PROVIDER"
-        ) {
-
-          if (
-            !phone ||
-            !businessName ||
-            !address
-          ) {
-
-            setError(
-              "Please complete all service provider details."
-            );
-
-            return;
+          if (!phone.trim()) {
+            errors.phone = "Please enter your phone number.";
           }
 
-
-          if (
-            latitude === null ||
-            longitude === null
-          ) {
-
-            setError(
-              "Please share your current location before creating your service provider account."
-            );
-
-            return;
+          if (!businessName.trim()) {
+            errors.businessName = "Please enter your garage or business name.";
           }
 
+          if (!address.trim()) {
+            errors.address = "Please enter your business address.";
+          }
+
+          if (latitude === null || longitude === null) {
+            errors.location = "Please share your location so drivers can find you.";
+          }
+
+        }
+
+        setFieldErrors(errors);
+
+        if (Object.keys(errors).length > 0) {
+
+          setError(
+            "Please fix the highlighted fields below."
+          );
+
+          window.scrollTo({ top: 0, behavior: "smooth" });
+
+          return;
         }
 
 
@@ -334,9 +349,9 @@ function RegisterPage() {
         const data =
           await registerUser({
 
-            name,
+            name: name.trim(),
 
-            email,
+            email: email.trim(),
 
             password,
 
@@ -402,14 +417,13 @@ function RegisterPage() {
 
 
         setError(
-
-          error.response
-            ?.data
-            ?.message ||
-
-            "Registration failed."
-
+          getErrorMessage(
+            error,
+            "Registration failed. Please try again."
+          )
         );
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
 
       } finally {
 
@@ -503,11 +517,11 @@ function RegisterPage() {
 
           {error && (
 
-            <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">
-
-              ⚠️ {error}
-
-            </div>
+            <FormAlert
+              type="error"
+              message={error}
+              onClose={() => setError("")}
+            />
 
           )}
 
@@ -518,11 +532,10 @@ function RegisterPage() {
 
           {success && (
 
-            <div className="mt-6 rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-700">
-
-              ✓ {success}
-
-            </div>
+            <FormAlert
+              type="success"
+              message={`${success} Redirecting to login...`}
+            />
 
           )}
 
@@ -702,13 +715,15 @@ function RegisterPage() {
                 type="text"
                 placeholder="Enter your full name"
                 value={name}
-                onChange={(e) =>
-                  setName(
-                    e.target.value
-                  )
-                }
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+                autoComplete="name"
+                onChange={(e) => {
+                  setName(e.target.value);
+                  clearFieldError("name");
+                }}
+                className={inputClass("name")}
               />
+
+              {renderFieldError("name")}
 
             </div>
 
@@ -728,13 +743,15 @@ function RegisterPage() {
                 type="email"
                 placeholder="example@email.com"
                 value={email}
-                onChange={(e) =>
-                  setEmail(
-                    e.target.value
-                  )
-                }
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+                autoComplete="email"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  clearFieldError("email");
+                }}
+                className={inputClass("email")}
               />
+
+              {renderFieldError("email")}
 
             </div>
 
@@ -757,13 +774,15 @@ function RegisterPage() {
                   type="tel"
                   placeholder="07X XXX XXXX"
                   value={phone}
-                  onChange={(e) =>
-                    setPhone(
-                      e.target.value
-                    )
-                  }
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+                  autoComplete="tel"
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    clearFieldError("phone");
+                  }}
+                  className={inputClass("phone")}
                 />
+
+                {renderFieldError("phone")}
 
               </div>
 
@@ -828,13 +847,14 @@ function RegisterPage() {
                   type="text"
                   placeholder="e.g. ABC Auto Care"
                   value={businessName}
-                  onChange={(e) =>
-                    setBusinessName(
-                      e.target.value
-                    )
-                  }
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+                  onChange={(e) => {
+                    setBusinessName(e.target.value);
+                    clearFieldError("businessName");
+                  }}
+                  className={inputClass("businessName")}
                 />
+
+                {renderFieldError("businessName")}
 
               </div>
 
@@ -853,14 +873,15 @@ function RegisterPage() {
                 <textarea
                   placeholder="Enter your garage or service area"
                   value={address}
-                  onChange={(e) =>
-                    setAddress(
-                      e.target.value
-                    )
-                  }
+                  onChange={(e) => {
+                    setAddress(e.target.value);
+                    clearFieldError("address");
+                  }}
                   rows={3}
-                  className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+                  className={`resize-none ${inputClass("address")}`}
                 />
+
+                {renderFieldError("address")}
 
               </div>
 
@@ -983,7 +1004,11 @@ function RegisterPage() {
                   longitude ===
                     null && (
 
-                  <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-white p-5 text-center">
+                  <div className={`mt-4 rounded-xl border border-dashed bg-white p-5 text-center ${
+                    fieldErrors.location
+                      ? "border-red-400"
+                      : "border-slate-300"
+                  }`}>
 
                     <div className="text-2xl">
                       📍
@@ -1006,6 +1031,8 @@ function RegisterPage() {
                   </div>
 
                 )}
+
+                {renderFieldError("location")}
 
               </div>
 
@@ -1041,16 +1068,16 @@ function RegisterPage() {
                 </label>
 
 
-                <input
-                  type="password"
+                <PasswordInput
+                  id="password"
                   placeholder="Minimum 6 characters"
                   value={password}
-                  onChange={(e) =>
-                    setPassword(
-                      e.target.value
-                    )
-                  }
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+                  autoComplete="new-password"
+                  error={fieldErrors.password}
+                  onChange={(value) => {
+                    setPassword(value);
+                    clearFieldError("password");
+                  }}
                 />
 
               </div>
@@ -1067,16 +1094,16 @@ function RegisterPage() {
                 </label>
 
 
-                <input
-                  type="password"
+                <PasswordInput
+                  id="confirmPassword"
                   placeholder="Repeat your password"
                   value={confirmPassword}
-                  onChange={(e) =>
-                    setConfirmPassword(
-                      e.target.value
-                    )
-                  }
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+                  autoComplete="new-password"
+                  error={fieldErrors.confirmPassword}
+                  onChange={(value) => {
+                    setConfirmPassword(value);
+                    clearFieldError("confirmPassword");
+                  }}
                 />
 
               </div>
@@ -1113,6 +1140,18 @@ function RegisterPage() {
               : "Create Service Provider Account"}
 
           </button>
+
+
+          {/* ===========================================
+              GOOGLE (drivers only: providers need garage details)
+          =========================================== */}
+
+          {role === "DRIVER" && (
+            <GoogleSignInButton
+              text="signup_with"
+              onError={setError}
+            />
+          )}
 
 
           {/* ===========================================

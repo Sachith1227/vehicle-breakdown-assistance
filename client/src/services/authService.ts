@@ -39,3 +39,13 @@ export const registerUser = async (
 
   return response.data;
 };
+export const googleLoginUser = async (
+  credential: string
+) => {
+  const response = await api.post(
+    "/auth/google",
+    { credential }
+  );
+
+  return response.data;
+};

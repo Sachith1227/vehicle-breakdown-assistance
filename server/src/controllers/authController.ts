@@ -3,6 +3,8 @@ import { AuthRequest } from "../middleware/authMiddleware";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../config/prisma";
+import { OAuth2Client } from "google-auth-library";
+import crypto from "crypto";
 
 
 // =====================================================
@@ -479,6 +481,156 @@ export const getMe = async (
 
     console.error(
       "Get user error:",
+      error
+    );
+
+    return res.status(500).json({
+      message:
+        "Internal server error",
+    });
+
+  }
+};
+
+// =====================================================
+// GOOGLE SIGN-IN
+// =====================================================
+// Verifies a Google ID token from the browser. Existing
+// users are logged in by email; new users become drivers
+// (service providers need garage details, so they use
+// the normal registration form).
+
+const googleClient =
+  new OAuth2Client();
+
+export const googleLogin = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+
+    const { credential } = req.body;
+
+    const clientId =
+      process.env.GOOGLE_CLIENT_ID;
+
+
+    if (!clientId) {
+      return res.status(503).json({
+        message:
+          "Google sign-in is not configured",
+      });
+    }
+
+    if (!credential) {
+      return res.status(400).json({
+        message:
+          "Google credential is required",
+      });
+    }
+
+
+    // =================================================
+    // 1. VERIFY GOOGLE TOKEN
+    // =================================================
+
+    let payload;
+
+    try {
+      const ticket =
+        await googleClient.verifyIdToken({
+          idToken: credential,
+          audience: clientId,
+        });
+
+      payload = ticket.getPayload();
+    } catch {
+      return res.status(401).json({
+        message:
+          "Google sign-in failed. Please try again.",
+      });
+    }
+
+
+    if (
+      !payload?.email ||
+      !payload.email_verified
+    ) {
+      return res.status(401).json({
+        message:
+          "Your Google email address is not verified",
+      });
+    }
+
+
+    // =================================================
+    // 2. FIND OR CREATE USER
+    // =================================================
+
+    let user =
+      await prisma.user.findUnique({
+        where: {
+          email: payload.email,
+        },
+      });
+
+
+    if (!user) {
+
+      // Random password: Google users never log in with one
+      const randomPassword =
+        await bcrypt.hash(
+          crypto.randomBytes(32).toString("hex"),
+          10
+        );
+
+      user =
+        await prisma.user.create({
+          data: {
+            name:
+              payload.name ||
+              payload.email.split("@")[0],
+            email: payload.email,
+            password: randomPassword,
+            role: "DRIVER",
+          },
+        });
+    }
+
+
+    // =================================================
+    // 3. CREATE JWT
+    // =================================================
+
+    const token =
+      jwt.sign(
+        {
+          userId: user.id,
+          role: user.role,
+        },
+        process.env.JWT_SECRET!,
+        {
+          expiresIn: "1h",
+        }
+      );
+
+
+    return res.status(200).json({
+      message:
+        "Login successful",
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+
+  } catch (error) {
+
+    console.error(
+      "Google login error:",
       error
     );
 
