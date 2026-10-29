@@ -5,8 +5,8 @@
 // Watch the position for a few seconds and keep the most
 // accurate reading, stopping early once it is good enough.
 
-const GOOD_ENOUGH_METERS = 25;
-const MAX_WAIT_MS = 10000;
+const GOOD_ENOUGH_METERS = 50;
+const MAX_WAIT_MS = 5000;
 
 export const getBestPosition = (
   onSuccess: (position: GeolocationPosition) => void,
