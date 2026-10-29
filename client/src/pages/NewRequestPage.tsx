@@ -11,9 +11,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 
-import MapLayers from "../components/MapLayers";
-import PlaceSearch from "../components/PlaceSearch";
-import { getBestPosition } from "../utils/geolocation";
+import MapLayers from "../components/MapLayers";import { getBestPosition } from "../utils/geolocation";
 
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -818,21 +816,6 @@ function NewRequestPage() {
               </button>
 
 
-              {/* Manual choice: IP-based location can be far off */}
-
-              <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-400">
-                Or find your location manually
-              </p>
-
-              <PlaceSearch
-                onSelect={(lat, lng) => {
-                  setLatitude(lat);
-                  setLongitude(lng);
-                  setAccuracy(null);
-                  setError("");
-                }}
-              />
-
 
               {/* =================================================
                   MAP
@@ -1014,8 +997,9 @@ function NewRequestPage() {
                           </p>
                           <p className="mt-1">
                             Your device has no GPS, so this is a rough
-                            estimate. Search your town above, or click
-                            or drag the pin to your exact spot.
+                            estimate. For your real location, turn on
+                            location services in your device settings
+                            or use your phone, then try again.
                           </p>
                         </div>
                       ) : (
@@ -1047,7 +1031,7 @@ function NewRequestPage() {
                     </p>
 
                     <p className="mt-1 text-xs text-slate-500">
-                      Use your current location or search for a place above.
+                      Click "Use My Current Location" to continue.
                     </p>
 
                   </div>
