@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BackButton from "../components/BackButton";
+import AuthShell from "../components/AuthShell";
 import FormAlert from "../components/FormAlert";
 import PasswordInput from "../components/PasswordInput";
 import GoogleSignInButton from "../components/GoogleSignInButton";
@@ -75,22 +76,19 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-10">
-
-      {/* Main Card */}
-      <div className="w-full max-w-md">
+    <AuthShell>
 
         {/* Back to Home */}
         <BackButton
           to="/"
         />
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xl mt-6">
+        <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
 
-          {/* Logo */}
-          <div className="flex items-center gap-3">
+          {/* Logo (mobile; large screens show the side panel) */}
+          <div className="flex items-center gap-3 lg:hidden">
 
-            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm">
+            <div className="h-12 w-12 overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-slate-100">
               <img
                 src="/roadrescue-logo.png"
                 alt="RoadRescue Logo"
@@ -99,12 +97,12 @@ function LoginPage() {
             </div>
 
             <div>
-              <h1 className="text-xl font-bold text-slate-900">
+              <h1 className="text-xl font-extrabold text-slate-900">
                 RoadRescue
               </h1>
 
               <p className="text-xs text-slate-500">
-                Vehicle Breakdown Assistance
+                Your Ride, Our Rescue.
               </p>
             </div>
 
@@ -112,14 +110,14 @@ function LoginPage() {
 
 
           {/* Heading */}
-          <div className="mt-8">
+          <div className="mt-8 lg:mt-0">
 
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-              Welcome back
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
+              Welcome back 👋
             </h2>
 
             <p className="mt-2 text-sm text-slate-500">
-              Login to your RoadRescue account to continue.
+              Log in to request help or check on your mechanic.
             </p>
 
           </div>
@@ -203,7 +201,7 @@ function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-7 w-full rounded-xl bg-blue-600 px-4 py-3.5 font-bold text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-7 w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3.5 font-bold text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
@@ -237,14 +235,12 @@ function LoginPage() {
         </div>
 
 
-        {/* Footer */}
-        <p className="mt-6 text-center text-xs text-slate-400">
+        {/* Footer (mobile) */}
+        <p className="mt-6 text-center text-xs text-slate-400 lg:hidden">
           © 2026 RoadRescue. Vehicle Breakdown Assistance.
         </p>
 
-      </div>
-
-    </div>
+    </AuthShell>
   );
 }
 

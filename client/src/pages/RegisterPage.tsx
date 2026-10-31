@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import BackButton from "../components/BackButton";
 
+import AuthShell from "../components/AuthShell";
 import FormAlert from "../components/FormAlert";
 import PasswordInput from "../components/PasswordInput";
 import GoogleSignInButton from "../components/GoogleSignInButton";
@@ -442,9 +443,7 @@ function RegisterPage() {
 
   return (
 
-    <div className="min-h-screen bg-slate-50 px-4 py-10">
-
-      <div className="mx-auto w-full max-w-2xl">
+    <AuthShell wide>
 
 
         {/* =============================================
@@ -459,16 +458,16 @@ function RegisterPage() {
             MAIN CARD
         ============================================= */}
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xl mt-6">
+        <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
 
 
           {/* ===========================================
               LOGO
           =========================================== */}
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 lg:hidden">
 
-            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white">
+            <div className="h-12 w-12 overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-slate-100">
 
               <img
                 src="/roadrescue-logo.png"
@@ -481,12 +480,12 @@ function RegisterPage() {
 
             <div>
 
-              <h1 className="text-xl font-bold text-slate-900">
+              <h1 className="text-xl font-extrabold text-slate-900">
                 RoadRescue
               </h1>
 
               <p className="text-xs text-slate-500">
-                Vehicle Breakdown Assistance
+                Your Ride, Our Rescue.
               </p>
 
             </div>
@@ -498,14 +497,15 @@ function RegisterPage() {
               TITLE
           =========================================== */}
 
-          <div className="mt-8">
+          <div className="mt-8 lg:mt-0">
 
-            <h2 className="text-3xl font-bold text-slate-900">
-              Create your account
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
+              Join RoadRescue
             </h2>
 
             <p className="mt-2 text-sm text-slate-500">
-              Choose how you want to use RoadRescue.
+              Get help on the road, or help drivers near you. Choose how
+              you'll use RoadRescue.
             </p>
 
           </div>
@@ -1185,15 +1185,13 @@ function RegisterPage() {
             FOOTER
         ============================================= */}
 
-        <p className="mt-6 text-center text-xs text-slate-400">
+        <p className="mt-6 text-center text-xs text-slate-400 lg:hidden">
 
           © 2026 RoadRescue. Vehicle Breakdown Assistance.
 
         </p>
 
-      </div>
-
-    </div>
+    </AuthShell>
 
   );
 }

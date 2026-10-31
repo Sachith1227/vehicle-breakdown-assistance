@@ -1,12 +1,124 @@
 @import "tailwindcss";
 
+/* =====================================================
+   THEME
+   ===================================================== */
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Navy from the logo outline */
+  --color-navy-950: #060f26;
+  --color-navy-900: #0b1b3f;
+  --color-navy-800: #12285c;
+
+  /* Safety orange for emergency actions (hi-vis / road signs) */
+  --color-rescue-50: #fff4ed;
+  --color-rescue-100: #ffe5d4;
+  --color-rescue-400: #ff8a3d;
+  --color-rescue-500: #ff6b1a;
+  --color-rescue-600: #ea5208;
+  --color-rescue-700: #c2410c;
+
+  --animate-sos-ring: sos-ring 2s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-road: road 1.2s linear infinite;
+  --animate-fade-up: fade-up 0.6s ease-out both;
+  --animate-progress: progress 3s ease-in-out infinite;
+}
+
+@keyframes sos-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Moving lane markings */
+@keyframes road {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -64px 0;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progress {
+  0% {
+    width: 35%;
+  }
+  60%,
+  100% {
+    width: 72%;
+  }
+}
+
+/* =====================================================
+   BASE
+   ===================================================== */
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Dashed lane line used as a decorative divider */
+.road-line {
+  height: 6px;
+  background-image: linear-gradient(
+    90deg,
+    #facc15 0 32px,
+    transparent 32px 64px
+  );
+  background-size: 64px 6px;
+}
+
+/* Subtle grid behind dark hero sections */
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 
 /* Leaflet map */
