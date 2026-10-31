@@ -3,8 +3,8 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom";
-import BackButton from "../components/BackButton";
 
+import { Car, Check, CircleCheck, MapPin, Wrench } from "lucide-react";
 import AuthShell from "../components/AuthShell";
 import FormAlert from "../components/FormAlert";
 import PasswordInput from "../components/PasswordInput";
@@ -445,20 +445,11 @@ function RegisterPage() {
 
     <AuthShell wide>
 
-
-        {/* =============================================
-            BACK
-        ============================================= */}
-
-        <BackButton
-          to="/"
-        />
-
         {/* =============================================
             MAIN CARD
         ============================================= */}
 
-        <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
 
 
           {/* ===========================================
@@ -588,9 +579,9 @@ function RegisterPage() {
 
                 <div className="flex items-center justify-between">
 
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-2xl">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
 
-                    🚗
+                    <Car size={24} strokeWidth={2} />
 
                   </div>
 
@@ -598,9 +589,9 @@ function RegisterPage() {
                   {role ===
                     "DRIVER" && (
 
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-white">
 
-                      ✓
+                      <Check size={14} strokeWidth={3} />
 
                     </span>
 
@@ -646,9 +637,9 @@ function RegisterPage() {
 
                 <div className="flex items-center justify-between">
 
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100 text-2xl">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rescue-100 text-rescue-600">
 
-                    🔧
+                    <Wrench size={24} strokeWidth={2} />
 
                   </div>
 
@@ -656,9 +647,9 @@ function RegisterPage() {
                   {role ===
                     "SERVICE_PROVIDER" && (
 
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-white">
 
-                      ✓
+                      <Check size={14} strokeWidth={3} />
 
                     </span>
 
@@ -805,9 +796,9 @@ function RegisterPage() {
 
               <div className="flex items-center gap-3">
 
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rescue-100 text-rescue-600">
 
-                  🔧
+                  <Wrench size={20} />
 
                 </div>
 
@@ -919,11 +910,15 @@ function RegisterPage() {
                   className="w-full rounded-xl border border-blue-200 bg-blue-50 px-5 py-3 font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
                 >
 
-                  {locationLoading
+                  <span className="inline-flex items-center justify-center gap-2">
 
-                    ? "📍 Getting your location..."
+                    <MapPin size={18} />
 
-                    : "📍 Use My Current Location"}
+                    {locationLoading
+                      ? "Getting your location..."
+                      : "Use My Current Location"}
+
+                  </span>
 
                 </button>
 
@@ -939,9 +934,7 @@ function RegisterPage() {
 
                     <div className="flex items-center gap-2">
 
-                      <span className="text-lg">
-                        ✅
-                      </span>
+                      <CircleCheck size={22} className="shrink-0 text-green-600" />
 
 
                       <div>
@@ -1010,9 +1003,7 @@ function RegisterPage() {
                       : "border-slate-300"
                   }`}>
 
-                    <div className="text-2xl">
-                      📍
-                    </div>
+                    <MapPin size={28} className="mx-auto text-slate-400" />
 
 
                     <p className="mt-2 text-sm font-semibold text-slate-700">

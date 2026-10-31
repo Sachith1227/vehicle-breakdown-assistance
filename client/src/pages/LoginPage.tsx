@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import BackButton from "../components/BackButton";
 import AuthShell from "../components/AuthShell";
 import FormAlert from "../components/FormAlert";
 import PasswordInput from "../components/PasswordInput";
@@ -78,12 +77,7 @@ function LoginPage() {
   return (
     <AuthShell>
 
-        {/* Back to Home */}
-        <BackButton
-          to="/"
-        />
-
-        <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
 
           {/* Logo (mobile; large screens show the side panel) */}
           <div className="flex items-center gap-3 lg:hidden">
@@ -113,7 +107,7 @@ function LoginPage() {
           <div className="mt-8 lg:mt-0">
 
             <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
-              Welcome back 👋
+              Welcome back
             </h2>
 
             <p className="mt-2 text-sm text-slate-500">

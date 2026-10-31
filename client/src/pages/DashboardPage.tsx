@@ -3,6 +3,15 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getMyRequests } from "../services/requestService";
 import SosButton from "../components/SosButton";
+import {
+  Car,
+  ClipboardList,
+  LifeBuoy,
+  LogOut,
+  ShieldCheck,
+  Siren,
+  Wrench,
+} from "lucide-react";
 
 // =====================================================
 // TYPES & STATUS HELPERS
@@ -123,8 +132,8 @@ function DashboardPage() {
       <div className="relative overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 pb-24 text-white">
 
         <div className="hero-grid absolute inset-0" />
-        <div className="absolute -right-24 top-10 h-80 w-80 rounded-full bg-rescue-500/20 blur-3xl" />
-        <div className="absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-blue-600/30 blur-3xl" />
+        <div className="absolute -right-24 top-10 h-80 w-80 rounded-full bg-rescue-400/25 blur-3xl" />
+        <div className="absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-sky-300/30 blur-3xl" />
 
         <header className="relative border-b border-white/10">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
@@ -135,7 +144,7 @@ function DashboardPage() {
               </div>
               <div className="leading-tight">
                 <p className="text-lg font-extrabold">RoadRescue</p>
-                <p className="hidden text-xs text-blue-200/80 sm:block">Your Ride, Our Rescue.</p>
+                <p className="hidden text-xs text-blue-100 sm:block">Your Ride, Our Rescue.</p>
               </div>
             </Link>
 
@@ -143,16 +152,17 @@ function DashboardPage() {
               <div className="hidden items-center gap-3 sm:flex">
                 <div className="text-right">
                   <p className="text-sm font-semibold">{user?.name}</p>
-                  <p className="text-xs text-blue-200/70">Driver</p>
+                  <p className="text-xs text-blue-100">Driver</p>
                 </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-700 font-bold">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-blue-700">
                   {firstName?.[0]?.toUpperCase()}
                 </div>
               </div>
               <button
                 onClick={logout}
-                className="rounded-xl border border-white/15 px-4 py-2 text-sm font-semibold text-white/90 transition hover:bg-white/10"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
               >
+                <LogOut size={16} />
                 Log out
               </button>
             </div>
@@ -164,16 +174,16 @@ function DashboardPage() {
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pt-10 sm:px-6 lg:grid-cols-[1fr_auto]">
 
           <div className="animate-fade-up">
-            <p className="text-sm font-semibold text-blue-200/80">
-              {greeting}, {firstName} 👋
+            <p className="text-sm font-semibold text-blue-100">
+              {greeting}, {firstName}
             </p>
 
             {activeRequest ? (
               <>
                 <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-5xl">
-                  Hang tight. <span className="text-rescue-400">Help is coming.</span>
+                  Hang tight. <span className="text-amber-300">Help is coming.</span>
                 </h1>
-                <p className="mt-4 max-w-xl text-blue-100/80">
+                <p className="mt-4 max-w-xl text-blue-50">
                   {statusInfo[activeRequest.status]?.message} Stay with your
                   vehicle in a safe place with your hazard lights on.
                 </p>
@@ -181,9 +191,9 @@ function DashboardPage() {
             ) : (
               <>
                 <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-5xl">
-                  Vehicle trouble? <span className="text-rescue-400">We're here.</span>
+                  Vehicle trouble? <span className="text-amber-300">We're here.</span>
                 </h1>
-                <p className="mt-4 max-w-xl text-blue-100/80">
+                <p className="mt-4 max-w-xl text-blue-50">
                   Press SOS, share your location and the nearest mechanic will
                   be on the way. You're never stuck alone.
                 </p>
@@ -244,7 +254,7 @@ function DashboardPage() {
             to="/requests/new"
             className="group rounded-3xl border border-rescue-100 bg-white p-6 shadow-lg shadow-slate-200/50 transition hover:-translate-y-1 hover:shadow-xl"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rescue-50 text-2xl transition group-hover:scale-110">🆘</div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rescue-50 text-rescue-600 transition group-hover:scale-110"><LifeBuoy size={24} /></div>
             <h3 className="mt-4 font-bold text-slate-900">Request help</h3>
             <p className="mt-1 text-sm text-slate-500">Report a breakdown in under a minute.</p>
             <span className="mt-4 inline-block text-sm font-bold text-rescue-600">Get help now →</span>
@@ -254,7 +264,7 @@ function DashboardPage() {
             to="/vehicles"
             className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/50 transition hover:-translate-y-1 hover:shadow-xl"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-2xl transition group-hover:scale-110">🚗</div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 transition group-hover:scale-110"><Car size={24} /></div>
             <h3 className="mt-4 font-bold text-slate-900">My vehicles</h3>
             <p className="mt-1 text-sm text-slate-500">Save your vehicles so help knows what to expect.</p>
             <span className="mt-4 inline-block text-sm font-bold text-blue-600">Manage vehicles →</span>
@@ -264,7 +274,7 @@ function DashboardPage() {
             to="/requests"
             className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/50 transition hover:-translate-y-1 hover:shadow-xl"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-50 text-2xl transition group-hover:scale-110">📋</div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-50 text-green-600 transition group-hover:scale-110"><ClipboardList size={24} /></div>
             <h3 className="mt-4 font-bold text-slate-900">My requests</h3>
             <p className="mt-1 text-sm text-slate-500">
               {completedCount > 0
@@ -300,7 +310,7 @@ function DashboardPage() {
               </div>
             ) : recent.length === 0 ? (
               <div className="mt-6 rounded-2xl border border-dashed border-slate-200 p-10 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-3xl">🛣️</div>
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-green-600"><ShieldCheck size={30} /></div>
                 <h4 className="mt-4 font-bold text-slate-800">Smooth roads so far!</h4>
                 <p className="mt-1 text-sm text-slate-500">
                   No breakdowns yet. If you ever need help, it's one tap away.
@@ -314,7 +324,7 @@ function DashboardPage() {
                       to={`/requests/${request.id}`}
                       className="-mx-3 flex items-center gap-4 rounded-2xl px-3 py-4 transition hover:bg-slate-50"
                     >
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-lg">🚗</div>
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600"><Wrench size={20} /></div>
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-semibold text-slate-900">{formatProblem(request.problemType)}</p>
                         <p className="truncate text-sm text-slate-500">
@@ -339,7 +349,7 @@ function DashboardPage() {
           {/* Safety checklist */}
           <div className="rounded-3xl bg-gradient-to-br from-amber-50 to-rescue-50 p-6 ring-1 ring-amber-100">
 
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-2xl shadow-sm">🛡️</div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-rescue-600 shadow-sm"><ShieldCheck size={24} /></div>
 
             <h3 className="mt-5 text-lg font-bold text-slate-900">If you break down</h3>
             <p className="mt-1 text-sm text-slate-600">Your safety comes first. While you wait:</p>
@@ -362,7 +372,7 @@ function DashboardPage() {
             </ol>
 
             <div className="mt-6 rounded-2xl bg-white/80 p-4 text-sm">
-              <p className="font-bold text-slate-900">🚨 In a medical emergency</p>
+              <p className="flex items-center gap-2 font-bold text-slate-900"><Siren size={18} className="text-red-600" /> In a medical emergency</p>
               <p className="mt-1 text-slate-600">
                 Call <a href="tel:1990" className="font-bold text-rescue-600">1990</a> (Suwa Seriya ambulance)
                 or <a href="tel:119" className="font-bold text-rescue-600">119</a> (police).

@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface BackButtonProps {
@@ -23,57 +24,12 @@ function BackButton({
     <button
       type="button"
       onClick={handleBack}
-      className="
-        group
-        inline-flex
-        items-center
-        gap-2
-        rounded-xl
-        border
-        border-slate-200
-        bg-white
-        px-3
-        py-2
-        text-sm
-        font-semibold
-        text-slate-700
-        shadow-sm
-        transition-all
-        duration-200
-        hover:-translate-x-0.5
-        hover:border-blue-200
-        hover:bg-blue-50
-        hover:text-blue-700
-        hover:shadow-md
-        active:scale-[0.98]
-        focus:outline-none
-        focus:ring-2
-        focus:ring-blue-500
-        focus:ring-offset-2
-      "
+      className="group inline-flex items-center gap-2 rounded-full py-1 pr-3 text-sm font-semibold text-slate-500 transition hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
     >
-      <span
-        className="
-          flex
-          h-7
-          w-7
-          items-center
-          justify-center
-          overflow-hidden
-          rounded-full
-          transition-transform
-          duration-200
-          group-hover:-translate-x-1
-        "
-      >
-        <img
-          src="/back-button.png"
-          alt="Back"
-          className="h-7 w-7 object-cover"
-        />
+      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200 transition group-hover:-translate-x-0.5 group-hover:ring-blue-200">
+        <ArrowLeft size={16} strokeWidth={2.5} />
       </span>
-
-      <span>{label}</span>
+      {label}
     </button>
   );
 }

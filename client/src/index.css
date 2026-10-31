@@ -7,10 +7,10 @@
 @theme {
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
 
-  /* Navy from the logo outline */
-  --color-navy-950: #060f26;
-  --color-navy-900: #0b1b3f;
-  --color-navy-800: #12285c;
+  /* Brand blues from the logo (lightened) */
+  --color-navy-950: #183c94;
+  --color-navy-900: #1f4fc4;
+  --color-navy-800: #2f6ae0;
 
   /* Safety orange for emergency actions (hi-vis / road signs) */
   --color-rescue-50: #fff4ed;
