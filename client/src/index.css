@@ -8,9 +8,9 @@
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
 
   /* Brand blues from the logo (lightened) */
-  --color-navy-950: #183c94;
-  --color-navy-900: #1f4fc4;
-  --color-navy-800: #2f6ae0;
+  --color-navy-950: #122f78;
+  --color-navy-900: #1a43a8;
+  --color-navy-800: #285cc9;
 
   /* Safety orange for emergency actions (hi-vis / road signs) */
   --color-rescue-50: #fff4ed;
