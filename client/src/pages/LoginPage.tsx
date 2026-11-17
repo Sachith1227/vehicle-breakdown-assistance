@@ -111,7 +111,7 @@ function LoginPage() {
             </h2>
 
             <p className="mt-2 text-sm text-slate-500">
-              Log in to request help or check on your mechanic.
+              Log in as a driver to request help, or as a mechanic to manage rescue requests.
             </p>
 
           </div>

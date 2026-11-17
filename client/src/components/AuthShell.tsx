@@ -22,7 +22,7 @@ const promises = [
 
 export default function AuthShell({ children, wide = false }: AuthShellProps) {
   return (
-    <div className="min-h-screen bg-slate-50 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+    <div className="min-h-screen bg-slate-50 lg:grid lg:grid-cols-2">
 
       {/* =============================================
           RESCUE PANEL
@@ -34,7 +34,7 @@ export default function AuthShell({ children, wide = false }: AuthShellProps) {
         <div className="absolute -left-24 top-1/3 h-80 w-80 rounded-full bg-sky-300/30 blur-3xl" />
         <div className="absolute -right-16 bottom-10 h-72 w-72 rounded-full bg-rescue-400/30 blur-3xl" />
 
-        <div className="relative flex flex-1 flex-col justify-between p-10 xl:p-14">
+        <div className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col justify-between gap-10 p-10 xl:p-14">
 
           <Link to="/" className="flex items-center gap-3">
             <div className="h-12 w-12 overflow-hidden rounded-full bg-white p-0.5">
@@ -87,14 +87,14 @@ export default function AuthShell({ children, wide = false }: AuthShellProps) {
           FORM
       ============================================= */}
 
-      <main className="flex min-h-screen flex-col px-4 py-6 sm:px-8">
+      <main className="flex min-h-screen min-w-0 flex-col px-4 py-6 sm:px-8 lg:px-10 xl:px-14">
 
         <div className="mx-auto w-full max-w-2xl">
           <BackButton to="/" label="Back to home" />
         </div>
 
         <div className="flex flex-1 items-start justify-center py-6 lg:items-center">
-          <div className={`w-full animate-fade-up ${wide ? "max-w-2xl" : "max-w-md"}`}>
+          <div className={`w-full animate-fade-up ${wide ? "max-w-2xl" : "max-w-xl"}`}>
             {children}
           </div>
         </div>

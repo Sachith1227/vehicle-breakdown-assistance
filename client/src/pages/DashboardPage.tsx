@@ -136,7 +136,7 @@ function DashboardPage() {
         <div className="absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-sky-300/30 blur-3xl" />
 
         <header className="relative border-b border-white/10">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+          <div className="app-container flex items-center justify-between gap-4 py-4">
 
             <Link to="/dashboard" className="flex items-center gap-3">
               <div className="h-11 w-11 overflow-hidden rounded-full bg-white p-0.5">
@@ -171,7 +171,7 @@ function DashboardPage() {
         </header>
 
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pt-10 sm:px-6 lg:grid-cols-[1fr_auto]">
+        <div className="app-container relative grid items-center gap-8 pt-10 lg:min-h-72 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
 
           <div className="animate-fade-up">
             <p className="text-sm font-semibold text-blue-100">
@@ -183,7 +183,7 @@ function DashboardPage() {
                 <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-5xl">
                   Hang tight. <span className="text-amber-300">Help is coming.</span>
                 </h1>
-                <p className="mt-4 max-w-xl text-blue-50">
+                <p className="mt-4 max-w-2xl text-base leading-relaxed text-blue-50 lg:text-lg">
                   {statusInfo[activeRequest.status]?.message} Stay with your
                   vehicle in a safe place with your hazard lights on.
                 </p>
@@ -193,7 +193,7 @@ function DashboardPage() {
                 <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-5xl">
                   Vehicle trouble? <span className="text-amber-300">We're here.</span>
                 </h1>
-                <p className="mt-4 max-w-xl text-blue-50">
+                <p className="mt-4 max-w-2xl text-base leading-relaxed text-blue-50 lg:text-lg">
                   Press SOS, share your location and the nearest mechanic will
                   be on the way. You're never stuck alone.
                 </p>
@@ -201,7 +201,7 @@ function DashboardPage() {
             )}
           </div>
 
-          <div className="flex justify-center py-6 lg:px-12">
+          <div className="flex min-w-0 justify-center py-6">
             {activeRequest ? (
               <Link
                 to={`/requests/${activeRequest.id}`}
@@ -245,10 +245,10 @@ function DashboardPage() {
           MAIN
       ============================================= */}
 
-      <main className="relative mx-auto -mt-14 max-w-7xl px-4 pb-12 sm:px-6">
+      <main className="app-container relative -mt-14 pb-12">
 
         {/* Quick actions */}
-        <section className="grid gap-4 sm:grid-cols-3">
+        <section className="grid gap-4 md:grid-cols-3">
 
           <Link
             to="/requests/new"

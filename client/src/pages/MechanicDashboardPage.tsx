@@ -374,9 +374,9 @@ function MechanicDashboardPage() {
           NAVBAR
       ================================================= */}
 
-      <header className="border-b border-slate-200 bg-white">
+      <header className="border-b border-white/10 bg-gradient-to-r from-navy-950 to-navy-900 text-white">
 
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <div className="app-container flex items-center justify-between gap-4 py-4">
 
 
           {/* LOGO */}
@@ -386,7 +386,7 @@ function MechanicDashboardPage() {
             className="flex items-center gap-3"
           >
 
-            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-0.5">
 
               <img
                 src="/roadrescue-logo.png"
@@ -399,12 +399,12 @@ function MechanicDashboardPage() {
 
             <div>
 
-              <h1 className="text-lg font-bold text-slate-900">
+              <h1 className="text-lg font-extrabold text-white">
                 RoadRescue
               </h1>
 
-              <p className="text-xs text-slate-500">
-                Vehicle Breakdown Assistance. Your Ride, Our Rescue.
+              <p className="hidden text-xs text-blue-100 sm:block">
+                Your Ride, Our Rescue.
               </p>
 
             </div>
@@ -418,14 +418,14 @@ function MechanicDashboardPage() {
 
             <div className="hidden text-right sm:block">
 
-              <p className="text-sm font-semibold text-slate-900">
+              <p className="text-sm font-semibold text-white">
 
                 {user?.name}
 
               </p>
 
 
-              <p className="text-xs text-slate-500">
+              <p className="hidden text-xs text-blue-100 sm:block">
 
                 Service Provider
 
@@ -436,10 +436,10 @@ function MechanicDashboardPage() {
 
             <button
               onClick={logout}
-              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              className="shrink-0 rounded-xl border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
             >
 
-              Logout
+              Log out
 
             </button>
 
@@ -454,23 +454,23 @@ function MechanicDashboardPage() {
           MAIN
       ================================================= */}
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
+      <main className="app-container py-8 lg:py-10">
 
 
         {/* =================================================
             WELCOME
         ================================================= */}
 
-        <section className="mb-8">
+        <section className="mb-8 rounded-3xl bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 p-6 text-white sm:p-8 lg:p-10">
 
-          <p className="text-sm font-semibold tracking-wide text-blue-600">
+          <p className="text-sm font-semibold tracking-wide text-blue-100">
 
             SERVICE PROVIDER
 
           </p>
 
 
-          <h2 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
 
             Good day,{" "}
 
@@ -482,7 +482,7 @@ function MechanicDashboardPage() {
           </h2>
 
 
-          <p className="mt-2 max-w-2xl text-slate-500">
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-blue-50 lg:text-lg">
 
             Manage roadside assistance requests
             and help drivers get back on the road.
@@ -686,7 +686,7 @@ function MechanicDashboardPage() {
             <button
               onClick={loadDashboard}
               disabled={loading}
-              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
             >
 
               ↻ Refresh
@@ -739,7 +739,7 @@ function MechanicDashboardPage() {
 
           ) : (
 
-            <div className="grid gap-5 lg:grid-cols-2">
+            <div className="grid gap-5 lg:grid-cols-2 2xl:grid-cols-3">
 
               {assignedRequests.map(
                 (request) => (
@@ -1045,7 +1045,7 @@ function MechanicDashboardPage() {
 
           ) : (
 
-            <div className="grid gap-5 lg:grid-cols-2">
+            <div className="grid gap-5 lg:grid-cols-2 2xl:grid-cols-3">
 
               {pendingRequests.map(
                 (request) => (
