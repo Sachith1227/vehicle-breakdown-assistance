@@ -9,14 +9,17 @@ import breakdownRequestRoutes from "./routes/breakdownRequestRoutes";
 const app = express();
 
 const PORT = process.env.PORT || 5000;
-app.use(
-  cors({
-    // CLIENT_URL may hold several comma-separated origins
-    origin: (process.env.CLIENT_URL || "http://localhost:5173")
-      .split(",")
-      .map((url) => url.trim().replace(/\/+$/, "")),
-  })
-);
+// Known frontend deployments plus any explicitly configured origins.
+const clientOrigins = [
+  "http://localhost:5173",
+  "https://vehicle-breakdown-assistance-sachith.vercel.app",
+  "https://vehicle-breakdown-assistance-u8dj-git-main-sachith3.vercel.app",
+  ...(process.env.CLIENT_URL || "").split(","),
+]
+  .map((url) => url.trim().replace(/\/+$/, ""))
+  .filter(Boolean);
+
+app.use(cors({ origin: clientOrigins }));
 app.use(express.json());
 
 
