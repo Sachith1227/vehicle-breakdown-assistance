@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Link } from "react-router-dom";
 import { MapPin, Navigation, Wrench } from "lucide-react";
 import BackButton from "./BackButton";
 
@@ -28,41 +27,33 @@ export default function AuthShell({ children, wide = false }: AuthShellProps) {
           RESCUE PANEL
       ============================================= */}
 
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 text-white lg:flex lg:flex-col">
+      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 text-white lg:sticky lg:top-0 lg:flex lg:h-dvh lg:self-start lg:flex-col">
 
         <div className="hero-grid absolute inset-0" />
         <div className="absolute -left-24 top-1/3 h-80 w-80 rounded-full bg-sky-300/30 blur-3xl" />
         <div className="absolute -right-16 bottom-10 h-72 w-72 rounded-full bg-rescue-400/30 blur-3xl" />
 
-        <div className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col justify-between gap-10 p-10 xl:p-14">
+        <div className="relative mx-auto flex w-full max-w-3xl min-h-0 flex-1 flex-col gap-6 p-8 xl:p-10">
 
-          <Link to="/" className="flex items-center gap-3">
-            <div className="h-12 w-12 overflow-hidden rounded-full bg-white p-0.5">
-              <img src="/roadrescue-logo.png" alt="RoadRescue logo" className="h-full w-full object-contain" />
-            </div>
-            <div className="leading-tight">
-              <p className="text-xl font-extrabold">RoadRescue</p>
-              <p className="text-xs text-blue-100">Your Ride, Our Rescue.</p>
-            </div>
-          </Link>
+
 
           <div>
             <img
               src="/roadrescue-logo.png"
               alt=""
-              className="mb-8 h-40 w-40 animate-float rounded-full bg-white p-1.5 shadow-2xl shadow-blue-900/40"
+              className="mb-6 h-[clamp(5rem,17dvh,10rem)] w-[clamp(5rem,17dvh,10rem)] rounded-full bg-white p-1.5 shadow-2xl shadow-blue-900/40"
             />
 
-            <h2 className="text-4xl font-extrabold leading-tight tracking-tight">
+            <h2 className="text-[clamp(1.75rem,4.5dvh,2.5rem)] font-extrabold leading-tight tracking-tight">
               Wherever you break down,
               <br />
               <span className="text-amber-300">we've got your back.</span>
             </h2>
 
-            <ul className="mt-8 space-y-4">
+            <ul className="mt-6 space-y-3">
               {promises.map(({ Icon, text }) => (
                 <li key={text} className="flex items-center gap-3 text-white">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/20">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/20">
                     <Icon size={18} strokeWidth={2.25} />
                   </span>
                   {text}
@@ -71,7 +62,7 @@ export default function AuthShell({ children, wide = false }: AuthShellProps) {
             </ul>
           </div>
 
-          <p className="text-sm text-blue-100/80">
+          <p className="mt-auto text-xs text-blue-100/80">
             © 2026 RoadRescue. Vehicle Breakdown Assistance.
           </p>
 
