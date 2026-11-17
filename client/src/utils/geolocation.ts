@@ -1,12 +1,7 @@
-// =====================================================
-// BEST-ACCURACY GEOLOCATION
-// =====================================================
-// The first GPS fix is often coarse (Wi-Fi / IP based).
-// Watch the position for a few seconds and keep the most
-// accurate reading, stopping early once it is good enough.
-
+// Wait for an initial reading, then briefly refine its accuracy.
 const GOOD_ENOUGH_METERS = 50;
-const MAX_WAIT_MS = 5000;
+const MAX_WAIT_MS = 15000;
+const REFINE_WAIT_MS = 5000;
 
 export const getBestPosition = (
   onSuccess: (position: GeolocationPosition) => void,
@@ -14,50 +9,50 @@ export const getBestPosition = (
 ) => {
   let best: GeolocationPosition | null = null;
   let finished = false;
+  let watchId: number | undefined;
+  let refinementTimer: ReturnType<typeof setTimeout> | undefined;
+  let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
 
-  const finish = () => {
+  const finish = (error?: GeolocationPositionError) => {
     if (finished) return;
     finished = true;
+    if (watchId !== undefined) navigator.geolocation.clearWatch(watchId);
+    clearTimeout(deadlineTimer);
+    clearTimeout(refinementTimer);
 
-    navigator.geolocation.clearWatch(watchId);
-    clearTimeout(timer);
-
-    if (best) onSuccess(best);
+    if (best) {
+      onSuccess(best);
+    } else {
+      onError(error ?? {
+        code: 3,
+        message: "Getting your location took too long. Please try again.",
+        PERMISSION_DENIED: 1,
+        POSITION_UNAVAILABLE: 2,
+        TIMEOUT: 3,
+      });
+    }
   };
 
-  const watchId = navigator.geolocation.watchPosition(
+  deadlineTimer = setTimeout(() => finish(), MAX_WAIT_MS);
+  watchId = navigator.geolocation.watchPosition(
     (position) => {
-      if (
-        !best ||
-        position.coords.accuracy < best.coords.accuracy
-      ) {
+      if (finished) return;
+      if (!best) {
+        refinementTimer = setTimeout(() => finish(), REFINE_WAIT_MS);
+      }
+      if (!best || position.coords.accuracy < best.coords.accuracy) {
         best = position;
       }
-
-      if (position.coords.accuracy <= GOOD_ENOUGH_METERS) {
-        finish();
-      }
+      if (position.coords.accuracy <= GOOD_ENOUGH_METERS) finish();
     },
-
-    (error) => {
-      // Keep a reading we already have instead of failing
-      if (best) {
-        finish();
-        return;
-      }
-
-      finished = true;
-      navigator.geolocation.clearWatch(watchId);
-      clearTimeout(timer);
-      onError(error);
-    },
-
+    (error) => finish(error),
     {
       enableHighAccuracy: true,
-      timeout: 15000,
+      timeout: MAX_WAIT_MS,
       maximumAge: 0,
     }
   );
 
-  const timer = setTimeout(finish, MAX_WAIT_MS);
+  // Also clean up if a provider invokes a callback during registration.
+  if (finished) navigator.geolocation.clearWatch(watchId);
 };
